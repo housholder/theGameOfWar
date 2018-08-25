@@ -1,0 +1,12 @@
+notes before building init
+also before building quay image
+
+run:
+docker run --name war-mongo -d mongo:4.1.2-xenial
+
+connect:
+docker run -it --link war-mongo:mongo --rm mongo mongo --host mongo -p 28000:27017
+
+#stop or restart mongo server
+docker stop war-mongo
+docker start war-mongo

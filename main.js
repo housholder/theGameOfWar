@@ -18,54 +18,55 @@ numberOfCards = 52;
 //--------------------------- GLOBALS -------------------------------------
 //Set original Deck as imutable
 const originalDeck = deckGenisus(numberOfCards)
+
 //-------------------------------------------------------------------------
 
 //-------------------------- Database -------------------------------------
 
-function addDocMongo(myobj, collection, dbName) {
-    MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db(dbName);
-        //var myobj = { name: "Company Inc", address: "Highway 37" };
-        dbo.collection(collection).insertOne(myobj, function (err, res) {
-            if (err) throw err;
-            console.log("1 document inserted");
-            db.close();
-        });
-    });
-}
+// function addDocMongo(myobj, collection, dbName) {
+//     MongoClient.connect(url, function (err, db) {
+//         if (err) throw err;
+//         var dbo = db.db(dbName);
+//         //var myobj = { name: "Company Inc", address: "Highway 37" };
+//         dbo.collection(collection).insertOne(myobj, function (err, res) {
+//             if (err) throw err;
+//             console.log("1 document inserted");
+//             db.close();
+//         });
+//     });
+// }
 
-// function findLastIndex(collection,dbName){
-//     MongoClient.connect(url, function(err, db) {
+// // function findLastIndex(collection,dbName){
+// //     MongoClient.connect(url, function(err, db) {
+// //         if (err) throw err;
+// //         var dbo = db.db(dbName);
+// //         dbo.collection(collection)
+// //         .find({}, { _id: 0}).toArray(function(err, result) {
+// //             if (err) throw err;
+// //             console.log(result);
+// //             db.close();
+// //           });
+// //         });
+
+// // }
+// // findLastIndex("decks",dbName)
+
+// function findLastIndex(collection, dbName) {
+//     MongoClient.connect(url, function (err, db) {
 //         if (err) throw err;
 //         var dbo = db.db(dbName);
 //         dbo.collection(collection)
-//         .find({}, { _id: 0}).toArray(function(err, result) {
-//             if (err) throw err;
-//             console.log(result);
-//             db.close();
-//           });
-//         });
+//             .find({})
+//             .sort({ deckIndex: -1 })
+//             .limit(1).toArray(function (err, result) {
+//                 if (err) throw err;
+//                 console.log(result);
+//                 return result;
+//                 db.close();
+//             });
+//     });
 
 // }
-// findLastIndex("decks",dbName)
-
-function findLastIndex(collection, dbName) {
-    MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db(dbName);
-        dbo.collection(collection)
-            .find({})
-            .sort({ deckIndex: -1 })
-            .limit(1).toArray(function (err, result) {
-                if (err) throw err;
-                console.log(result);
-                return result;
-                db.close();
-            });
-    });
-
-}
 // findLastIndex("decks", dbName)
 
 //mongoose
@@ -346,8 +347,41 @@ function storeOriginalData() {
 
 
 function createDeck(numberOfDecks) {
-    deckIndex = 0 //TODO:NOTE: need to do a lookup in mongo for the next index
+    deckIndex = 0
     startTime = Date.now //NOTE: not using this for anything right now!
+    for (i1 = 1; i1 <= numberOfDecks; i1++) {
+        collection = "decks";
+        deckIndex++;
+        this.deckIndex = deckIndex;
+        randomizeDeck();
+        this.hashDeck = CryptoJS.SHA256(this.shuffledDeck.toString()).toString()
+        makeHands(this.shuffledDeck);
+        convertHands(this.handAs)
+        this.hashHandAs = CryptoJS.SHA256(this.handAs.toString()).toString()
+        this.hashHandBs = CryptoJS.SHA256(this.handBs.toString()).toString()
+        this.playableA = this.convertedHand
+        this.hashHandA = CryptoJS.SHA256(this.playableA.toString()).toString()
+        convertHands(this.handBs)
+        this.playableB = this.convertedHand
+        this.hashHandB = CryptoJS.SHA256(this.playableB.toString()).toString()
+        playTheGame(this.playableA, this.playableB);
+        newDeckObject() // the database object
+        addDocMongo(myobj, collection, dbName)
+
+    }
+
+};
+
+//------------------------------ Analyitics ---------------------------
+
+//------------------------------ Block Chain ---------------------------
+
+//------------------------------ Final Wrapper ---------------------------
+// THIS IS SO MUCH FUN!
+
+function runMe(numberOfDecks){
+    this.deckIndex = 0
+    this.startTime = Date.now //NOTE: not using this for anything right now!
     for (i1 = 1; i1 <= numberOfDecks; i1++) {
         collection = "decks";
         deckIndex++;
@@ -394,13 +428,6 @@ function createDeck(numberOfDecks) {
 
 };
 
-//------------------------------ Analyitics ---------------------------
-
-//------------------------------ Block Chain ---------------------------
-
-//------------------------------ Final Wrapper ---------------------------
-
-
 // initmongodb()
 // initCollection()
-createDeck(1000)
+// createDeck(1000)
